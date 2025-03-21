@@ -60,6 +60,27 @@ def shorten_url():
 # Return 201 Created
 
 
+#  Retrieve Original URL information
+@app.route("/shorten/<short_code>", methods=["GET"])
+def get_original_url(short_code):
+    conn = sqlite3.connect("urls.db")
+    cursor = conn.cursor()
+    
+    # Fetch full details of the short URL
+    cursor.execute("SELECT id, url, short_code, created_at, updated_at FROM short_urls WHERE short_code = ?", (short_code,))
+    result = cursor.fetchone()
+    conn.close()
+    if result:
+        return jsonify({
+            "id": result[0],
+            "url": result[1],  
+            "shortCode": result[2], 
+            "createdAt": result[3],
+            "updatedAt": result[4]
+        }), 200
+    else:
+        return jsonify({"error": "Short URL not found"}), 404
+
 if __name__ == "__main__":
     create_table()
     app.run(debug=True)
