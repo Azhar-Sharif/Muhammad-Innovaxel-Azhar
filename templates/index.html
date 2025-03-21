@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            width: 80%;
+            max-width: 400px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>URL Shortener</h2>
+
+    <!-- Shorten URL -->
+    <form action="/shorten" method="post">
+        <input type="text" name="url" placeholder="Enter URL to shorten" required>
+        <button type="submit">Shorten URL</button>
+    </form>
+    {% if short_code %}
+        <div class="result">Shortened URL: <a href="{{ short_code }}" target="_blank">{{ short_code }}</a></div>
+    {% endif %}
+
+    <!-- Retrieve URL -->
+    <form action="/retrieve" method="post">
+        <input type="text" name="short_code" placeholder="Enter short code" required>
+        <button type="submit">Retrieve URL</button>
+    </form>
+    {% if original_url %}
+        <div class="result">Original URL: <a href="{{ original_url }}" target="_blank">{{ original_url }}</a></div>
+    {% endif %}
+
+    <!-- Update URL -->
+    <form action="/update" method="post">
+        <input type="text" name="short_code" placeholder="Short code to update" required>
+        <input type="text" name="new_url" placeholder="Enter new URL" required>
+        <button type="submit">Update URL</button>
+    </form>
+    {% if update_message %}
+        <div class="result">{{ update_message }}</div>
+    {% endif %}
+
+    <!-- Delete URL -->
+    <form action="/delete" method="post">
+        <input type="text" name="short_code" placeholder="Short code to delete" required>
+        <button type="submit">Delete URL</button>
+    </form>
+    {% if delete_message %}
+        <div class="result">{{ delete_message }}</div>
+    {% endif %}
+
+    <!-- Get Stats -->
+    <form action="/stats" method="post">
+        <input type="text" name="short_code" placeholder="Short code for stats" required>
+        <button type="submit">Get Stats</button>
+    </form>
+    {% if stats %}
+        <div class="result">URL: {{ stats.url }}<br>Access Count: {{ stats.access_count }}</div>
+    {% endif %}
+</body>
+</html>
