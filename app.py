@@ -137,6 +137,27 @@ def delete_original_url(short_code):
     conn.close()
     return jsonify({"message": "No Content"}), 204
 
+# Get URL Stats
+@app.route("/shorten/<short_code>/stats", methods=["GET"])
+def get_url_stats(short_code):
+    conn = sqlite3.connect("urls.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM short_urls WHERE short_code = ?", (short_code,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if not result:
+        return jsonify({"error": "Short URL not found"}), 404
+
+    return jsonify({
+        "id": result[0],
+        "url": result[1],
+        "shortCode": result[2],
+        "createdAt": result[3],
+        "updatedAt": result[4],
+        "accessCount": result[5]
+    }), 200  
+
 if __name__ == "__main__":
     create_table()
     app.run(debug=True)
