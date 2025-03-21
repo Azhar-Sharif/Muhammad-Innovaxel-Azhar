@@ -120,6 +120,22 @@ def update_original_url(short_code):
         "updatedAt": result[4]                         
     }), 200
 
+# Delete Short URL
+@app.route("/shorten/<short_code>", methods=["DELETE"])
+def delete_original_url(short_code):
+    # Check if the short URL exists
+    conn = sqlite3.connect("urls.db")
+    cursor = conn.cursor()
+    cursor.execute("select id from short_urls where short_code = ?", (short_code,))
+    result = cursor.fetchone()
+    if not result:
+        conn.close()
+        return jsonify({"error": "Short URL not found"}), 404
+    # Delete the short URL
+    cursor.execute("DELETE FROM short_urls WHERE short_code = ?", (short_code,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "No Content"}), 204
 
 if __name__ == "__main__":
     create_table()
