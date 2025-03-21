@@ -85,6 +85,42 @@ def get_original_url(short_code):
     else:
         return jsonify({"error": "Short URL not found"}), 404
 
+@app.route("/shorten/<short_code>", methods=["PUT"])
+def update_original_url(short_code):
+    data = request.get_json()
+    if not data or "url" not in data:
+        return jsonify({"error": "Missing 'url' in request body"}), 400
+
+    original_url = data["url"]
+    conn = sqlite3.connect("urls.db")
+    cursor = conn.cursor()
+    # Check if the short URL exists
+    cursor.execute("SELECT id FROM short_urls WHERE short_code = ?", (short_code,))
+    result = cursor.fetchone()
+
+    if not result:
+        conn.close()
+        return jsonify({"error": "Short URL not found"}), 404
+    
+    # Update the original URL
+    timestamp = datetime.utcnow().isoformat()
+    cursor.execute("UPDATE short_urls SET url = ?, updated_at = ? WHERE short_code = ?", (original_url, timestamp, short_code))
+    conn.commit()
+    
+
+    # Return updated short URL details
+    cursor.execute("select * from short_urls where short_code = ?", (short_code,))
+    result = cursor.fetchone()
+    conn.close()
+    return jsonify({
+        "id": result[0],
+        "url": result[1],
+        "shortCode": result[2],
+        "createdAt": result[3],
+        "updatedAt": result[4]                         
+    }), 200
+
+
 if __name__ == "__main__":
     create_table()
     app.run(debug=True)
