@@ -69,8 +69,12 @@ def get_original_url(short_code):
     # Fetch full details of the short URL
     cursor.execute("SELECT id, url, short_code, created_at, updated_at FROM short_urls WHERE short_code = ?", (short_code,))
     result = cursor.fetchone()
-    conn.close()
+
     if result:
+         # Increment access count
+        cursor.execute("UPDATE short_urls SET access_count = access_count + 1 WHERE short_code = ?", (short_code,))
+        conn.commit()
+        conn.close()
         return jsonify({
             "id": result[0],
             "url": result[1],  
