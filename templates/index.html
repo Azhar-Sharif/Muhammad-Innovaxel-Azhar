@@ -3,26 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>URL Shortener API</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
         input, button { padding: 10px; margin: 10px; width: 300px; }
-        .error { color: red; }
-        .success { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>Flask URL Shortener</h1>
+    <h1>Innovaxel URL Shortening Service</h1>
 
+    
+
+    <!-- Form to Shorten a URL -->
+    <h2>Shorten URL</h2>
     <form action="/shorten" method="POST">
-        <input type="text" name="url" placeholder="Enter URL to shorten" required>
-        <button type="submit">Shorten</button>
+        <input type="url" name="url" placeholder="Enter URL to shorten" required>
+        <button type="submit">Shorten URL</button>
     </form>
 
-    {% if short_url %}
-        <p class="success">Shortened URL: <a href="{{ short_url }}" target="_blank">{{ short_url }}</a></p>
-    {% endif %}
+    <!-- Direct URL Redirection Form -->
+    <h2>Visit Original Website by short code</h2>
+    <form action="/redirect_to_url" method="POST">
+        <input type="text" name="redirect_short_code" placeholder="Enter Short Code to Visit Website" required>
+        <button type="submit">Visit Website</button>
+    </form>
+    <!-- Retrieve Original URL through short code -->
+    <h2>Retrieve Original URL</h2>
+    <form action="/retrieve_short_code_from_form" method="POST">
+        <input type="text" name="short_code_for_retrieve" placeholder="Enter Short Code" required>
+        <button type="submit">Get Original URL</button>
+    </form>
+
+    <!-- Update Shortened URL -->
+    <h2>Update Shortened URL</h2>
+    <form action="/update_url_by_form" method="POST">
+        <input type="text" name="short_code_for_update" placeholder="Enter Short Code" required>
+        <input type="url" name="new_url" placeholder="Enter New URL" required>
+        <button type="submit">Update URL</button>
+    </form>
+
+    <!-- Delete Shortened URL -->
+    <h2>Delete Shortened URL</h2>
+    <form action="/delete_url_by_form" method="POST">
+        <input type="text" name="short_code_for_delete" placeholder="Enter Short Code" required>
+        <button type="submit">Delete URL</button>
+    </form>
+
+    <!-- Get URL Statistics -->
+    <h2>Get URL Statistics</h2>
+    <form action="/get_url_stats_by_form" method="POST">
+        <input type="text" name="short_code_for_stats" placeholder="Enter Short Code" required>
+        <button type="submit">Get URL Statistics</button>
+    </form>
 
 </body>
 </html>
+
