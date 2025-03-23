@@ -71,10 +71,6 @@ def get_original_url(short_code):
     result = cursor.fetchone()
 
     if result:
-         # Increment access count
-        cursor.execute("UPDATE short_urls SET access_count = access_count + 1 WHERE short_code = ?", (short_code,))
-        conn.commit()
-        conn.close()
         return jsonify({
             "id": result[0],
             "url": result[1],  
@@ -158,6 +154,23 @@ def get_url_stats(short_code):
         "accessCount": result[5]
     }), 200  
 
+# Redirect when accessing a short URL
+@app.route("/<short_code>")
+def redirect_url(short_code):
+    # Check if the short URL exists
+    conn = sqlite3.connect("urls.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT url FROM short_urls WHERE short_code = ?", (short_code,))
+    result = cursor.fetchone()
+    if result:
+        # Increment access count
+        cursor.execute("UPDATE short_urls SET access_count = access_count + 1 WHERE short_code = ?", (short_code,))
+        conn.commit()
+        conn.close()
+        # Redirect to the original URL
+        return redirect(result[0], code=302)
+    conn.close()
+    return "Short URL not found", 404 
 if __name__ == "__main__":
     create_table()
     app.run(debug=True)
